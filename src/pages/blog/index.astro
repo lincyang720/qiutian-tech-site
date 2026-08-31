@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostItem from '../../components/PostItem.astro';
+import { SITE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.lang === 'zh-CN'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<BaseLayout title="博客" description={`${SITE.author} 的全部技术文章`}>
+  <section class="section container">
+    <h2>全部文章</h2>
+    <p class="lead">{posts.length} 篇 · 持续更新中</p>
+    <div class="post-list">
+      {posts.map((p) => <PostItem post={p} />)}
+    </div>
+  </section>
+</BaseLayout>

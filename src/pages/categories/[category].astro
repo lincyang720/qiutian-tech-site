@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostItem from '../../components/PostItem.astro';
+import { getCategory } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const cats = [...new Set(posts.map((p) => p.data.category))];
+  return cats.map((cat) => ({
+    params: { category: cat },
+    props: {
+      cat,
+      posts: posts
+        .filter((p) => p.data.category === cat)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+const { cat, posts } = Astro.props;
+const meta = getCategory(cat);
+---
+<BaseLayout title={meta?.label} description={meta?.desc}>
+  <section class="section container">
+    <span
+      class="dot"
+      style={`display:inline-block;width:12px;height:12px;border-radius:4px;background:${meta?.color};margin-right:8px;vertical-align:middle`}
+    ></span>
+    <h2 style="display:inline;vertical-align:middle">{meta?.label}</h2>
+    <p class="lead">{meta?.sub} · {meta?.desc}</p>
+    <div class="post-list">
+      {posts.map((p) => <PostItem post={p} />)}
+    </div>
+  </section>
+</BaseLayout>

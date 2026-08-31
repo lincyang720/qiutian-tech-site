@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+---
+<BaseLayout title="关于" description={`关于 ${SITE.author} 与技术博客`}>
+  <section class="article container">
+    <h1>关于我</h1>
+    <p class="meta">{SITE.tagline}</p>
+    <div class="prose">
+      <p>
+        我是{SITE.author}，一名 Java 讲师，也是一名「一人公司」实践者。这个博客是我把
+        后端工程、AI 应用与副业探索沉淀成<strong>可检索、可复利</strong>数字资产的地方。
+      </p>
+      <h2>你会读到什么</h2>
+      <ul>
+        <li><strong>后端</strong>：Java / Go / Python 的工程实战</li>
+        <li><strong>AI</strong>：从大模型原理、RAG、微调，到 LangChain / LangGraph / Spring AI / Dify / AgentScope 的工程落地</li>
+        <li><strong>出海做站</strong>：面向全球市场的技术独立站与增长</li>
+        <li><strong>副业探索</strong>：技术人如何做一人公司、做知识付费</li>
+      </ul>
+      <h2>内容飞轮</h2>
+      <p>
+        公众号 / 小红书负责分发，博客负责沉淀与 SEO，知识星球负责付费转化，
+        学员案例再反哺内容。这个站点就是飞轮的「中枢」。
+      </p>
+    </div>
+    <div class="cta">
+      <h3>想一起搞钱？来知识星球「{SITE.author}」</h3>
+      <p>实战案例、源码、答疑，都在里面。</p>
+      <a class="btn" href={SITE.zhihuPlanet}>加入知识星球</a>
+    </div>
+  </section>
+</BaseLayout>

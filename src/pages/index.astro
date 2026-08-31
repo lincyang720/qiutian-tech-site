@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import PostItem from '../components/PostItem.astro';
+import { SITE, CATEGORIES } from '../consts';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.lang === 'zh-CN'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const counts: Record<string, number> = {};
+for (const p of posts) counts[p.data.category] = (counts[p.data.category] || 0) + 1;
+
+const recent = posts.slice(0, 5);
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="container">
+      <span class="tag">{SITE.tagline}</span>
+      <h1>{SITE.author}</h1>
+      <p class="role">{SITE.role}</p>
+      <p class="bio">{SITE.bio}</p>
+      <div class="cta-row">
+        <a class="btn" href="/blog">读我的文章</a>
+        <a class="btn ghost" href={SITE.zhihuPlanet}>加入知识星球</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="channels">
+    <div class="container">
+      <h2>我的频道</h2>
+      <ul class="channels">
+        {SITE.channels.map((c) => <li><a href={c.url}>{c.label} →</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="columns">
+    <div class="container">
+      <h2>我在写什么</h2>
+      <p class="lead">技术线 + 商业线，覆盖从写代码到一人公司的完整路径。</p>
+      <div class="grid">
+        {CATEGORIES.map((c) => <CategoryCard category={c} count={counts[c.key] || 0} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <h2>最新文章</h2>
+      <div class="post-list">
+        {recent.map((p) => <PostItem post={p} />)}
+      </div>
+      <p style="margin-top:16px"><a href="/blog">查看全部文章 →</a></p>
+      <p style="margin-top:8px"><a href="/en">Read in English →</a></p>
+    </div>
+  </section>
+</BaseLayout>

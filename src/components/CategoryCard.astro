@@ -1,0 +1,17 @@
+---
+import type { Category } from '../consts';
+interface Props {
+  category: Category;
+  count?: number;
+}
+const { category, count = 0 } = Astro.props;
+---
+<a class="cat-card" href={`/categories/${category.key}`}>
+  <div class="top">
+    <span class="dot" style={`background:${category.color}`}></span>
+    <h3>{category.label}</h3>
+  </div>
+  <div class="sub">{category.sub}</div>
+  <p>{category.desc}</p>
+  <div class="count">{count} 篇文章</div>
+</a>

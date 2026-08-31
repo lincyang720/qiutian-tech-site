@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostItem from '../../components/PostItem.astro';
+import { SITE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<BaseLayout title="Home" description={SITE.description}>
+  <section class="hero">
+    <div class="container">
+      <span class="tag">Global · English</span>
+      <h1>{SITE.author}</h1>
+      <p class="role">{SITE.role}</p>
+      <p class="bio">
+        I write about backend engineering (Java / Go / Python) and AI applications
+        (LLMs / RAG / Agents), and document how a developer builds a one-person
+        company. Selected posts in English below — building in public from China to the world.
+      </p>
+      <div class="cta-row">
+        <a class="btn" href="/blog">Read my posts</a>
+        <a class="btn ghost" href={SITE.zhihuPlanet}>Join the Circle</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>English Posts</h2>
+    <div class="post-list">
+      {posts.map((p) => <PostItem post={p} />)}
+    </div>
+    <p style="margin-top:24px"><a href="/">← 中文版</a></p>
+  </section>
+</BaseLayout>

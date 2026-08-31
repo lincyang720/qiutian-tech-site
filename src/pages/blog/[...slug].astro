@@ -1,0 +1,35 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE, getCategory } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const cat = getCategory(post.data.category);
+const date = post.data.pubDate.toISOString().slice(0, 10);
+---
+<BaseLayout title={post.data.title} description={post.data.description} ogType="article">
+  <article class="article container">
+    <div class="crumb">
+      <a href="/">首页</a> / <a href={`/categories/${post.data.category}`}>{cat?.label}</a>
+    </div>
+    <h1>{post.data.title}</h1>
+    <div class="meta">{date} · {cat?.label} · {post.data.tags.join(' / ')}</div>
+    <div class="prose">
+      <Content />
+    </div>
+    <div class="cta">
+      <h3>想系统学？来知识星球「{SITE.author}」</h3>
+      <p>更多实战案例、源码与一对一答疑，扫码或点击加入。</p>
+      <a class="btn" href={SITE.zhihuPlanet}>加入知识星球</a>
+    </div>
+  </article>
+</BaseLayout>

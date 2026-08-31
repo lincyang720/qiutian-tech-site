@@ -1,0 +1,13 @@
+---
+import { SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container row">
+    <span>© {year} {SITE.author} · {SITE.tagline}</span>
+    <span>
+      <a href={SITE.zhihuPlanet}>知识星球</a> ·
+      <a href={`mailto:${SITE.email}`}>联系</a>
+    </span>
+  </div>
+</footer>
