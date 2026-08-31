@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSeries } from '../../utils/series';
+import { getCategory } from '../../consts';
+
+const series = await getSeries();
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<BaseLayout title="学习路线图" description="跟着 AI 边学边写，把学习过程分阶段沉淀成系列文章。">
+  <article class="article container">
+    <div class="crumb"><a href="/">首页</a> / 学习路线图</div>
+    <h1>学习路线图</h1>
+    <p class="lead">我习惯用 AI 学新东西时，把过程拆成阶段、边学边发。这里汇总所有进行中 / 已完成的系列，既是我的学习档案，也是个人 IP 的成长轨迹。</p>
+
+    {series.length === 0 && <p class="empty">还没有系列文章。给文章加上 <code>series</code> 与 <code>seriesOrder</code> 字段即可自动聚合到这里。</p>}
+
+    <div class="series-list">
+      {series.map((s) => (
+        <a class="series-card" href={`/series/${encodeURIComponent(s.name)}`}>
+          <div class="series-head">
+            <h2>{s.name}</h2>
+            <span class={"progress " + (s.published >= s.planned ? 'done' : '')}>
+              {s.published}/{s.planned} 阶段
+            </span>
+          </div>
+          <p class="series-desc">{s.desc}</p>
+          <div class="series-meta">
+            <span>更新于 {fmt(s.latest)}</span>
+            <span class="dots">
+              {s.categories.map((c) => <i class="dot" style={`background:${getCategory(c)?.color ?? '#999'}`} title={getCategory(c)?.label}></i>)}
+            </span>
+          </div>
+          <div class="bar"><i style={`width:${Math.round((s.published / s.planned) * 100)}%`}></i></div>
+        </a>
+      ))}
+    </div>
+  </article>
+</BaseLayout>

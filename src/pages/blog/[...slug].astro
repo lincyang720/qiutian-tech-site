@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE, getCategory } from '../../consts';
+import { getSeriesNeighbors } from '../../utils/series';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -15,6 +16,9 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const cat = getCategory(post.data.category);
 const date = post.data.pubDate.toISOString().slice(0, 10);
+
+const all = await getCollection('blog', ({ data }) => !data.draft);
+const { prev, next } = getSeriesNeighbors(post, all);
 ---
 <BaseLayout title={post.data.title} description={post.data.description} ogType="article">
   <article class="article container">
@@ -23,9 +27,29 @@ const date = post.data.pubDate.toISOString().slice(0, 10);
     </div>
     <h1>{post.data.title}</h1>
     <div class="meta">{date} · {cat?.label} · {post.data.tags.join(' / ')}</div>
+
+    {post.data.series && (
+      <a class="series-banner" href={`/series/${encodeURIComponent(post.data.series)}`}>
+        📚 系列：{post.data.series}
+        {post.data.seriesOrder && <span> · 第 {post.data.seriesOrder} 阶段</span>}
+      </a>
+    )}
+
     <div class="prose">
       <Content />
     </div>
+
+    {post.data.series && (prev || next) && (
+      <nav class="series-nav">
+        {prev
+          ? <a class="sn prev" href={`/blog/${prev.id}`}>← 上一篇<br><b>{prev.data.title}</b></a>
+          : <span class="sn placeholder"></span>}
+        {next
+          ? <a class="sn next" href={`/blog/${next.id}`}>下一篇 →<br><b>{next.data.title}</b></a>
+          : <span class="sn placeholder"></span>}
+      </nav>
+    )}
+
     <div class="cta">
       <h3>想系统学？来知识星球「{SITE.author}」</h3>
       <p>更多实战案例、源码与一对一答疑，扫码或点击加入。</p>

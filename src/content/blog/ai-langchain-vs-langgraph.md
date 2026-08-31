@@ -5,6 +5,9 @@ pubDate: 2026-08-15
 category: ai-engineering
 tags: ["LangChain", "LangGraph", "Agent"]
 lang: zh-CN
+series: "跟着 AI 学 AI 工程"
+seriesOrder: 2
+seriesTotal: 5
 ---
 
 ## 先说结论

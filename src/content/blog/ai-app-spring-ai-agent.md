@@ -5,6 +5,9 @@ pubDate: 2026-08-12
 category: ai-app
 tags: ["Spring AI", "Agent", "Java"]
 lang: zh-CN
+series: "跟着 AI 学 AI 工程"
+seriesOrder: 3
+seriesTotal: 5
 ---
 
 ## 目标

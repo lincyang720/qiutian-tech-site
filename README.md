@@ -5,7 +5,10 @@
 - 技术栈：Astro 5 + 原生 Scoped CSS（零运行时 JS，Lighthouse 满分）
 - SEO：`@astrojs/sitemap` 自动生成站点地图；每页带 OpenGraph meta
 - i18n：内置 `zh-CN` / `en`，默认中文，`/en` 为英文版
-- 部署：Vercel / Cloudflare Pages（静态产物，免费 + 全球 CDN）
+- 部署：Vercel（Git 集成，push 即上线，免费 + 全球 CDN）
+- 仓库：https://github.com/lincyang720/qiutian-tech-site
+
+> **完整部署步骤（域名购买 / Vercel 绑定 / DNS 配置 / 网络问题）见 [DEPLOY.md](./DEPLOY.md)**
 
 ## 本地运行
 
@@ -32,8 +35,10 @@ ai-tech-blog/
 │   │   ├── about.astro          # 关于我
 │   │   ├── en/index.astro       # 英文版首页（个人 landing）
 │   │   ├── blog/index.astro      # 全部文章列表
-│   │   ├── blog/[...slug].astro  # 文章详情（自动路由）
-│   │   └── categories/[category].astro  # 分类列表
+│   │   ├── blog/[...slug].astro  # 文章详情（自动路由 + 系列前后篇导航）
+│   │   ├── categories/[category].astro  # 分类列表
+│   │   └── series/               # 学习路线图：总览 + 单系列详情
+│   ├── utils/series.ts          # 从文章聚合「学习系列」的纯函数
 │   └── styles/global.css   # 全局样式与主题变量
 └── public/                 # favicon 等静态资源
 ```
@@ -51,12 +56,28 @@ category: ai-basics          # backend | ai-basics | ai-engineering | ai-app | g
 tags: ["RAG", "大模型"]
 lang: zh-CN                  # zh-CN 或 en
 draft: false
+# —— 学习系列（可选）：把相关内容拆成阶段、分阶段发布 ——
+series: "跟着 AI 学 AI 工程"   # 同一系列名会自动聚合到 /series 与 /series/<名称>
+seriesOrder: 1                 # 阶段序号，决定系列内排序
+seriesTotal: 5                 # 计划总阶段数，用于显示进度（如 3/5）；省略则按已发布数计
+seriesDesc: "一句话介绍这个系列（写在第 1 篇即可）"
 ---
 
 正文用 Markdown 写，支持代码块、表格、引用。
 ```
 
 保存即自动生成 `/blog/<文件名>` 路由，并出现在首页与对应分类页。
+
+## 学习系列（分阶段发布）—— 核心特性
+
+个人站定位之一是「用 AI 边学边写、把学习过程分阶段沉淀」。给文章加上 `series` 字段即可自动获得：
+
+- `/series` —— 学习路线图总览：所有系列卡片 + 进度条（已发布/计划阶段）。
+- `/series/<系列名>` —— 单系列页：按 `seriesOrder` 列出各阶段、显示进度，未写完的阶段标「后续阶段规划中」。
+- 文章详情页自动出现**系列横幅**与**上一篇 / 下一篇**导航。
+- 首页「学习路线图」模块展示最近更新的系列。
+
+> 用法本质：每篇文章自带 `series` + `seriesOrder` 即可，无需任何额外配置；系列页全部由 `src/utils/series.ts` 从文章聚合生成。
 
 ## 六大专栏
 
@@ -71,11 +92,29 @@ draft: false
 
 ## 部署
 
-### Vercel
-推送 Git 仓库后，Framework 选 Astro，Build 命令 `npm run build`，Output `dist`。
+**详细手册见 [DEPLOY.md](./DEPLOY.md)**，这里只给最短路径：
 
-### Cloudflare Pages
-同样 Build `npm run build`，Output `dist`，无需额外配置。
+```bash
+git add -A && git commit -m "post: 文章标题" && git push
+# push 到 main 即触发 Vercel 自动构建上线（约 40s）
+```
+
+### 首次配置
+1. vercel.com 用 GitHub 登录 → Import `qiutian-tech-site`
+2. 构建参数自动识别（`vercel.json` 已声明 framework/输出目录/缓存/安全头）
+3. Settings → Domains 绑定自定义域名，按提示加 DNS 记录（A `@` → `76.76.21.21`）
+4. 域名定好后改 `astro.config.mjs` 的 `site`，否则 sitemap URL 全错
+
+### ⚠️ 本机网络注意
+`github.com:443` 在当前网络被阻断，**remote 必须走 SSH**：
+
+```bash
+git remote set-url origin git@github.com:lincyang720/qiutian-tech-site.git
+git config http.schannelCheckRevoke false   # 解决 Windows CRYPT_E_REVOCATION_OFFLINE
+```
+
+### 为什么不用 WordPress
+WordPress 需要 PHP 运行时 + MySQL + 可写目录，Vercel 三者均不提供，架构上无法部署。若只是想要"后台可视化写文章"，接 **Decap CMS / Keystatic** 即可（免费、纯 Git、保留静态站全部优势），详见 DEPLOY.md 第 6 节。
 
 ## 待接入位（已留好位置）
 

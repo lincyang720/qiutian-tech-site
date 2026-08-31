@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSeries } from '../../utils/series';
+import { getCategory } from '../../consts';
+
+export async function getStaticPaths() {
+  const series = await getSeries();
+  return series.map((s) => ({
+    params: { name: s.name },
+    props: { series: s },
+  }));
+}
+
+const { series } = Astro.props;
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const pct = Math.round((series.published / series.planned) * 100);
+---
+<BaseLayout title={`${series.name} · 学习系列`} description={series.desc}>
+  <article class="article container">
+    <div class="crumb">
+      <a href="/">首页</a> / <a href="/series">学习路线图</a> / {series.name}
+    </div>
+    <h1>{series.name}</h1>
+    <p class="lead">{series.desc}</p>
+
+    <div class="series-progress">
+      <div class="bar big"><i style={`width:${pct}%`}></i></div>
+      <span class={"progress " + (series.published >= series.planned ? 'done' : '')}>
+        已发布 {series.published} / 计划 {series.planned} 阶段（{pct}%）
+      </span>
+    </div>
+
+    <ol class="stages">
+      {series.posts.map((p) => (
+        <li>
+          <span class="stage-no">{p.data.seriesOrder ?? '·'}</span>
+          <div class="stage-body">
+            <a class="stage-title" href={`/blog/${p.id}`}>{p.data.title}</a>
+            <p class="stage-sub">{fmt(p.data.pubDate)} · {getCategory(p.data.category)?.label}</p>
+            <p class="stage-desc">{p.data.description}</p>
+          </div>
+        </li>
+      ))}
+      {series.published < series.planned && (
+        <li class="planned">
+          <span class="stage-no">…</span>
+          <div class="stage-body">
+            <span class="stage-title muted">后续阶段规划中</span>
+            <p class="stage-sub">本系列还将更新 {series.planned - series.published} 个阶段</p>
+          </div>
+        </li>
+      )}
+    </ol>
+
+    <p style="margin-top:24px"><a href="/series">← 返回学习路线图</a></p>
+  </article>
+</BaseLayout>

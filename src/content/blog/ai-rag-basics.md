@@ -5,6 +5,10 @@ pubDate: 2026-08-18
 category: ai-basics
 tags: ["RAG", "大模型", "向量数据库"]
 lang: zh-CN
+series: "跟着 AI 学 AI 工程"
+seriesOrder: 1
+seriesTotal: 5
+seriesDesc: "用 AI 边学边写，从 RAG 原理到 LangChain/LangGraph，再到 Spring AI 做出能跑的 Agent——一套完整的大模型应用入门路径。"
 ---
 
 ## RAG 解决什么问题

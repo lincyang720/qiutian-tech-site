@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import PostItem from '../components/PostItem.astro';
-import { SITE, CATEGORIES } from '../consts';
+import { SITE, CATEGORIES, getCategory } from '../consts';
+import { getSeries } from '../utils/series';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft && data.lang === 'zh-CN'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -12,6 +13,8 @@ const counts: Record<string, number> = {};
 for (const p of posts) counts[p.data.category] = (counts[p.data.category] || 0) + 1;
 
 const recent = posts.slice(0, 5);
+const series = (await getSeries()).slice(0, 3);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <BaseLayout>
   <section class="hero">
@@ -56,4 +59,27 @@ const recent = posts.slice(0, 5);
       <p style="margin-top:8px"><a href="/en">Read in English →</a></p>
     </div>
   </section>
+
+  {series.length > 0 && (
+    <section class="section" id="roadmap">
+      <div class="container">
+        <h2>学习路线图</h2>
+        <p class="lead">用 AI 边学边写，把学习过程拆成阶段、持续沉淀——这是我作为个人 IP 的成长轨迹。</p>
+        <div class="series-mini">
+          {series.map((s) => (
+            <a class="series-mini-card" href={`/series/${encodeURIComponent(s.name)}`}>
+              <div class="sm-head">
+                <h3>{s.name}</h3>
+                <span class={"progress " + (s.published >= s.planned ? 'done' : '')}>{s.published}/{s.planned}</span>
+              </div>
+              <p class="sm-desc">{s.desc}</p>
+              <div class="bar"><i style={`width:${Math.round((s.published / s.planned) * 100)}%`}></i></div>
+              <span class="sm-date">更新于 {fmt(s.latest)}</span>
+            </a>
+          ))}
+        </div>
+        <p style="margin-top:16px"><a href="/series">查看全部系列 →</a></p>
+      </div>
+    </section>
+  )}
 </BaseLayout>
