@@ -415,6 +415,56 @@ a:hover {
   gap: 8px;
 }
 
+/* ---------- Floating nav buttons ---------- */
+.float-btn {
+  position: fixed;
+  bottom: 24px;
+  z-index: 60;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 6px 18px rgba(255, 107, 53, 0.35);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0 16px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s, background 0.15s ease;
+  text-decoration: none;
+}
+.float-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.float-btn:hover {
+  background: var(--brand-dark);
+  text-decoration: none;
+  color: #fff;
+}
+.to-top {
+  right: 24px;
+  font-size: 20px;
+  padding: 0;
+}
+.back-float {
+  left: 24px;
+}
+.back-float .arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+
 @media (max-width: 600px) {
   .hero h1 {
     font-size: 26px;
@@ -425,6 +475,19 @@ a:hover {
   .post-item {
     flex-direction: column;
     gap: 4px;
+  }
+  .float-btn {
+    bottom: 16px;
+    height: 40px;
+    min-width: 40px;
+  }
+  .to-top {
+    right: 16px;
+  }
+  .back-float {
+    left: 16px;
+    padding: 0 14px;
+    font-size: 15px;
   }
 }
 

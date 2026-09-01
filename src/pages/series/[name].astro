@@ -16,7 +16,7 @@ const { series } = Astro.props;
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 const pct = Math.round((series.published / series.planned) * 100);
 ---
-<BaseLayout title={`${series.name} · 学习系列`} description={series.desc}>
+<BaseLayout title={`${series.name} · 学习系列`} description={series.desc} backHref="/series">
   <article class="article container">
     <div class="crumb">
       <a href="/">首页</a> / <a href="/series">学习路线图</a> / {series.name}

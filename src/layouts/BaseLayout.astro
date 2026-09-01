@@ -8,8 +8,17 @@ interface Props {
   title?: string;
   description?: string;
   ogType?: string;
+  /** 当前页的「返回」目标；不传则不显示返回按钮（用于首页） */
+  backHref?: string;
+  backLabel?: string;
 }
-const { title, description = SITE.description, ogType = 'website' } = Astro.props;
+const {
+  title,
+  description = SITE.description,
+  ogType = 'website',
+  backHref,
+  backLabel = '返回',
+} = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · ${SITE.tagline}`;
 ---
 <!doctype html>
@@ -31,5 +40,37 @@ const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · ${SITE
       <slot />
     </main>
     <Footer />
+
+    {/* 返回按钮：每个子页面都有，回到合理的上一级 */}
+    {backHref && (
+      <a class="float-btn back-float" href={backHref} aria-label={backLabel}>
+        <span class="arrow">←</span>{backLabel}
+      </a>
+    )}
+
+    {/* 返回顶部：滚动后浮现，所有页面通用 */}
+    <button class="float-btn to-top" id="toTop" aria-label="返回顶部" type="button">↑</button>
+
+    <script is:inline>
+      (function () {
+        var toTop = document.getElementById('toTop');
+        if (!toTop) return;
+        var ticking = false;
+        function onScroll() {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function () {
+            if (window.scrollY > 400) toTop.classList.add('show');
+            else toTop.classList.remove('show');
+            ticking = false;
+          });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+        toTop.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      })();
+    </script>
   </body>
 </html>

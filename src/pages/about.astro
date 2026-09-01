@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../consts';
 ---
-<BaseLayout title="关于" description={`关于 ${SITE.author} 与技术博客`}>
+<BaseLayout title="关于" description={`关于 ${SITE.author} 与技术博客`} backHref="/">
   <section class="article container">
     <h1>关于我</h1>
     <p class="meta">{SITE.tagline}</p>

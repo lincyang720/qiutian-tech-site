@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 const { cat, posts } = Astro.props;
 const meta = getCategory(cat);
 ---
-<BaseLayout title={meta?.label} description={meta?.desc}>
+<BaseLayout title={meta?.label} description={meta?.desc} backHref="/">
   <section class="section container">
     <span
       class="dot"

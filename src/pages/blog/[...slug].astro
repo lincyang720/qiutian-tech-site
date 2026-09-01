@@ -20,7 +20,7 @@ const date = post.data.pubDate.toISOString().slice(0, 10);
 const all = await getCollection('blog', ({ data }) => !data.draft);
 const { prev, next } = getSeriesNeighbors(post, all);
 ---
-<BaseLayout title={post.data.title} description={post.data.description} ogType="article">
+<BaseLayout title={post.data.title} description={post.data.description} ogType="article" backHref={`/categories/${post.data.category}`}>
   <article class="article container">
     <div class="crumb">
       <a href="/">首页</a> / <a href={`/categories/${post.data.category}`}>{cat?.label}</a>
